@@ -10,16 +10,15 @@ namespace QuickRatings
 {
     public class QuickRatingsSettings : ObservableObject
     {
-        private string option1 = string.Empty;
-        private bool option2 = false;
-        private bool optionThatWontBeSaved = false;
+        private int ratingSteps = 5;
+        private bool showZeroRating = false;
+        private bool showReset;
 
-        public string Option1 { get => option1; set => SetValue(ref option1, value); }
-        public bool Option2 { get => option2; set => SetValue(ref option2, value); }
+        public int RatingSteps { get => ratingSteps; set => SetValue(ref ratingSteps, value); }
+        public bool ShowZeroRating { get => showZeroRating; set => SetValue(ref showZeroRating, value); }
+        public bool ShowReset { get => showReset; set => SetValue(ref showReset, value); }
         // Playnite serializes settings object to a JSON object and saves it as text file.
         // If you want to exclude some property from being saved then use `JsonDontSerialize` ignore attribute.
-        [DontSerialize]
-        public bool OptionThatWontBeSaved { get => optionThatWontBeSaved; set => SetValue(ref optionThatWontBeSaved, value); }
     }
 
     public class QuickRatingsSettingsViewModel : ObservableObject, ISettings
@@ -75,6 +74,10 @@ namespace QuickRatings
             // Code executed when user decides to confirm changes made since BeginEdit was called.
             // This method should save settings made to Option1 and Option2.
             plugin.SavePluginSettings(Settings);
+            
+            // Reinitialize ratings on edit
+            // TODO - We could listen for actual changes but this should be fairly cheap
+            plugin.InitializeRatings();
         }
 
         public bool VerifySettings(out List<string> errors)
@@ -83,7 +86,14 @@ namespace QuickRatings
             // Executed before EndEdit is called and EndEdit is not called if false is returned.
             // List of errors is presented to user if verification fails.
             errors = new List<string>();
-            return true;
+            
+            // validate that we have a valid step count
+            if(Settings.RatingSteps < 1)
+            {
+                errors.Add("Number of ratings options must be greater than zero.");
+            }
+
+            return errors.Count == 0;
         }
     }
 }

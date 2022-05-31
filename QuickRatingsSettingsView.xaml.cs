@@ -21,5 +21,18 @@ namespace QuickRatings
         {
             InitializeComponent();
         }
+
+        private void HandleTextInputPreview_RatingSteps(object sender, TextCompositionEventArgs e)
+        {
+            // ensure all characters are text
+            foreach (var ch in e.Text)
+            {
+                if (!Char.IsDigit(ch))
+                {
+                    e.Handled = true;
+                    break;
+                }
+            }
+        }
     }
 }

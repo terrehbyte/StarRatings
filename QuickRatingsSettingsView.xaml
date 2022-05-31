@@ -6,9 +6,11 @@
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600">
     <StackPanel>
-        <TextBlock Text="Description for Option1:"/>
-        <TextBox Text="{Binding Settings.Option1}"/>
-        <TextBlock Text="Description for Option2:"/>
-        <CheckBox IsChecked="{Binding Settings.Option2}"/>
+        <TextBlock Text="Number of Ratings Options"/>
+        <TextBox Text="{Binding Settings.RatingSteps}" PreviewTextInput="HandleTextInputPreview_RatingSteps"/>
+        <TextBlock Text="Show Option for 0-Rating"/>
+        <CheckBox IsChecked="{Binding Settings.ShowZeroRating}"/>
+        <TextBlock Text="Show Option to Clear Rating"/>
+        <CheckBox IsChecked="{Binding Settings.ShowReset}"/>
     </StackPanel>
 </UserControl>

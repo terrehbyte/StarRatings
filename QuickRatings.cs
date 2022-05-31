@@ -17,6 +17,9 @@ namespace QuickRatings
 
         private QuickRatingsSettingsViewModel settings { get; set; }
 
+        private List<GameMenuItem> ratingMenuItems = new List<GameMenuItem>();
+        private int ratingStepSize = -1;
+        
         public override Guid Id { get; } = Guid.Parse("1d6c5e6a-2198-4b40-b3a1-28fe46f5704a");
 
         public QuickRatings(IPlayniteAPI api) : base(api)
@@ -24,58 +27,21 @@ namespace QuickRatings
             settings = new QuickRatingsSettingsViewModel(this);
             Properties = new GenericPluginProperties
             {
-                HasSettings = false
+                HasSettings = true
             };
+        }
+
+        public override void OnApplicationStarted(OnApplicationStartedEventArgs args)
+        {
+            InitializeRatings();
         }
 
         public override IEnumerable<GameMenuItem> GetGameMenuItems(GetGameMenuItemsArgs args)
         {
-            // quick ratings
-            for (int i = 1; i <= 5; ++i)
+            foreach (var item in ratingMenuItems)
             {
-                int starLevel = i;
-                
-                yield return new GameMenuItem
-                {
-                    MenuSection = "Set Rating",
-                    Description = $"{starLevel} Stars",
-                    Action = (selectedGames) =>
-                    {
-                        // apply rating change
-                        foreach(var game in selectedGames.Games)
-                        {
-                            game.UserScore = GetIntegerRating(starLevel);
-                        }
-                        
-                        // apply changes to db
-                        PlayniteApi.Database.Games.Update(selectedGames.Games);
-                    }
-                };
+                yield return item;
             }
-            
-            // reset rating
-            yield return new GameMenuItem
-            {
-                MenuSection = "Set Rating",
-                Description = $"Clear Rating",
-                Action = (selectedGames) =>
-                {
-                    // clear rating
-                    foreach(var game in selectedGames.Games)
-                    {
-                        game.UserScore = null;
-                    }
-                    
-                    // apply changes to db
-                    PlayniteApi.Database.Games.Update(selectedGames.Games);
-                }
-            };
-        }
-
-        private int GetIntegerRating(int rating)
-        {
-            int step = 100 / 5;
-            return step * rating;
         }
 
         public override ISettings GetSettings(bool firstRunSettings)
@@ -86,6 +52,57 @@ namespace QuickRatings
         public override UserControl GetSettingsView(bool firstRunSettings)
         {
             return new QuickRatingsSettingsView();
+        }
+
+        public void InitializeRatings()
+        {
+            ratingMenuItems.Clear();
+
+            var curSettings = ((QuickRatingsSettingsViewModel)GetSettings(false)).Settings;
+            ratingStepSize = 100 / curSettings.RatingSteps;
+            
+            // add all steps
+            for (int i = curSettings.ShowZeroRating ? 0 : 1; i <= curSettings.RatingSteps; ++i)
+            {
+                int starLevel = i;
+                ratingMenuItems.Add(new GameMenuItem
+                {
+                    MenuSection = "Set Rating",
+                    Description = $"{starLevel} Stars",
+                    Action = (selectedGames) =>
+                    {
+                        // apply rating change
+                        foreach (var game in selectedGames.Games)
+                        {
+                            game.UserScore = ratingStepSize * starLevel;
+                        }
+
+                        // apply changes to db
+                        PlayniteApi.Database.Games.Update(selectedGames.Games);
+                    }
+                });
+            }
+            
+            // add reset if enabled
+            if (curSettings.ShowReset)
+            {
+                ratingMenuItems.Add(new GameMenuItem
+                {
+                    MenuSection = "Set Rating",
+                    Description = $"Clear Rating",
+                    Action = (selectedGames) =>
+                    {
+                        // clear rating
+                        foreach (var game in selectedGames.Games)
+                        {
+                            game.UserScore = null;
+                        }
+
+                        // apply changes to db
+                        PlayniteApi.Database.Games.Update(selectedGames.Games);
+                    }
+                });
+            }
         }
     }
 }
