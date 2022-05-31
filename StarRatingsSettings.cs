@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QuickRatings
+namespace StarRatings
 {
-    public class QuickRatingsSettings : ObservableObject
+    public class StarRatingsSettings : ObservableObject
     {
         private int ratingSteps = 5;
         private bool showZeroRating = false;
@@ -21,13 +21,13 @@ namespace QuickRatings
         // If you want to exclude some property from being saved then use `JsonDontSerialize` ignore attribute.
     }
 
-    public class QuickRatingsSettingsViewModel : ObservableObject, ISettings
+    public class StarRatingsSettingsViewModel : ObservableObject, ISettings
     {
-        private readonly QuickRatings plugin;
-        private QuickRatingsSettings editingClone { get; set; }
+        private readonly StarRatings plugin;
+        private StarRatingsSettings editingClone { get; set; }
 
-        private QuickRatingsSettings settings;
-        public QuickRatingsSettings Settings
+        private StarRatingsSettings settings;
+        public StarRatingsSettings Settings
         {
             get => settings;
             set
@@ -37,13 +37,13 @@ namespace QuickRatings
             }
         }
 
-        public QuickRatingsSettingsViewModel(QuickRatings plugin)
+        public StarRatingsSettingsViewModel(StarRatings plugin)
         {
             // Injecting your plugin instance is required for Save/Load method because Playnite saves data to a location based on what plugin requested the operation.
             this.plugin = plugin;
 
             // Load saved settings.
-            var savedSettings = plugin.LoadPluginSettings<QuickRatingsSettings>();
+            var savedSettings = plugin.LoadPluginSettings<StarRatingsSettings>();
 
             // LoadPluginSettings returns null if not saved data is available.
             if (savedSettings != null)
@@ -52,7 +52,7 @@ namespace QuickRatings
             }
             else
             {
-                Settings = new QuickRatingsSettings();
+                Settings = new StarRatingsSettings();
             }
         }
 

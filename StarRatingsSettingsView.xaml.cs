@@ -13,11 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace QuickRatings
+namespace StarRatings
 {
-    public partial class QuickRatingsSettingsView : UserControl
+    public partial class StarRatingsSettingsView : UserControl
     {
-        public QuickRatingsSettingsView()
+        public StarRatingsSettingsView()
         {
             InitializeComponent();
         }

@@ -9,22 +9,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace QuickRatings
+namespace StarRatings
 {
-    public class QuickRatings : GenericPlugin
+    public class StarRatings : GenericPlugin
     {
         private static readonly ILogger logger = LogManager.GetLogger();
 
-        private QuickRatingsSettingsViewModel settings { get; set; }
+        private StarRatingsSettingsViewModel settings { get; set; }
 
         private List<GameMenuItem> ratingMenuItems = new List<GameMenuItem>();
         private int ratingStepSize = -1;
         
         public override Guid Id { get; } = Guid.Parse("1d6c5e6a-2198-4b40-b3a1-28fe46f5704a");
 
-        public QuickRatings(IPlayniteAPI api) : base(api)
+        public StarRatings(IPlayniteAPI api) : base(api)
         {
-            settings = new QuickRatingsSettingsViewModel(this);
+            settings = new StarRatingsSettingsViewModel(this);
             Properties = new GenericPluginProperties
             {
                 HasSettings = true
@@ -51,14 +51,14 @@ namespace QuickRatings
 
         public override UserControl GetSettingsView(bool firstRunSettings)
         {
-            return new QuickRatingsSettingsView();
+            return new StarRatingsSettingsView();
         }
 
         public void InitializeRatings()
         {
             ratingMenuItems.Clear();
 
-            var curSettings = ((QuickRatingsSettingsViewModel)GetSettings(false)).Settings;
+            var curSettings = ((StarRatingsSettingsViewModel)GetSettings(false)).Settings;
             ratingStepSize = 100 / curSettings.RatingSteps;
             
             // add all steps
