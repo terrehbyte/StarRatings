@@ -1,0 +1,30 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  run-msbuild:
+    runs-on: windows-latest
+    name: Run MSBuild
+    strategy:
+      fail-fast: true
+      matrix:
+        configuration: [Debug, Release]
+        platform: [AnyCPU]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.1.0
+        id: checkout_code
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Restore Packages
+        id: restore_packs
+        run: nuget install packages.config -OutputDirectory packages/
+
+      - name: Build
+        id: build
+        working-directory: .\
+        run: msbuild /p:SolutionDir=%CD% /p:Configuration=${{ matrix.configuration }}
