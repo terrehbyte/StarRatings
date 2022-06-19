@@ -60,7 +60,6 @@ To change these settings, visit the "Add-ons" menu and check your "Extension set
 
 ## To-Do
 
-- [ ] Create build and deployment script w/ unattended Playnite install
 - [ ] Publish to Playnite Addons
 - [ ] Build and deploy on push with GitHub Actions
 - [ ] Add options for "half stars" like 2.5/5.0 (aka 50 points)
