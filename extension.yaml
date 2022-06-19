@@ -1,7 +1,10 @@
-﻿Id: StarRatings_1d6c5e6a-2198-4b40-b3a1-28fe46f5704a
+﻿Id: StarRatings
 Name: StarRatings
 Author: terrehbyte
-Version: 0.1.0.0
+Version: 0.1.0
 Module: StarRatings.dll
 Type: GenericPlugin
 Icon: icon.png
+Links:
+  - Name: Plugin Homepage
+    Url: https://github.com/terrehbyte/StarRatings

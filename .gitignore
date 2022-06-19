@@ -2,6 +2,9 @@
 
 StarRatings.dll
 
+dist/
+staging/
+
 ## Ignore Rider files
 
 .idea/
