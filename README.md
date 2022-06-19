@@ -60,11 +60,15 @@ To change these settings, visit the "Add-ons" menu and check your "Extension set
 
 ## To-Do
 
-- Integrate localization
-- Add options for "half stars" like 2.5/5.0 (aka 50 points)
-- Support different rating item styles (e.g., "5*" vs. "5 Stars" vs. "⭐⭐⭐⭐⭐")
-- Create a custom user control to encourage custom theme adoption
-- Support generating and migrating tags based on ratings
+- [ ] Create build and deployment script w/ unattended Playnite install
+- [ ] Publish to Playnite Addons
+- [ ] Build and deploy on push with GitHub Actions
+- [ ] Add options for "half stars" like 2.5/5.0 (aka 50 points)
+- [ ] Support different rating item styles (e.g., "5*" vs. "5 Stars" vs. "⭐⭐⭐⭐⭐")
+- [ ] Support generating and migrating tags based on ratings
+- [ ] Add indicator for current rating in context menu
+- [ ] Integrate localization
+- [ ] Create a custom user control to encourage custom theme adoption
 
 ## License
 
