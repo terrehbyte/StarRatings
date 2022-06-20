@@ -109,7 +109,14 @@ namespace StarRatings
                 ratingMenuItems.Add(new GameMenuItem
                 {
                     MenuSection = "Set Rating",
+                    Description = $"-"
+                });
+                
+                ratingMenuItems.Add(new GameMenuItem
+                {
+                    MenuSection = "Set Rating",
                     Description = $"Clear Rating",
+                    Icon = PluginUtils.ResolveIconPath("return.png"),
                     Action = (selectedGames) =>
                     {
                         // clear rating

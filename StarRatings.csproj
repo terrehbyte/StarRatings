@@ -48,6 +48,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PluginUtils.cs" />
     <Compile Include="StarRatings.cs" />
     <Compile Include="StarRatingsSettings.cs" />
     <Compile Include="StarRatingsSettingsView.xaml.cs">
