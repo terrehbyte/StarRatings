@@ -53,6 +53,9 @@ You can configure the number of stars available and add a few utility options:
 - **Show Option to Clear Rating**
   - If checked, adds an option to reset the score.
   - Default: No
+- **Enable Star Ratings**
+  - If checked, allows you to award half a star at each star level. (e.g. 4.5 out of 5 stars)
+  - Default: No
 
 ![Star Ratings supports the options as described above.](.github/settings.png)
 
@@ -62,7 +65,7 @@ To change these settings, visit the "Add-ons" menu and check your "Extension set
 
 - [ ] Publish to Playnite Addons
 - [ ] Build and deploy on push with GitHub Actions
-- [ ] Add options for "half stars" like 2.5/5.0 (aka 50 points)
+- [x] Add options for "half stars" like 2.5/5.0 (aka 50 points)
 - [ ] Support different rating item styles (e.g., "5*" vs. "5 Stars" vs. "⭐⭐⭐⭐⭐")
 - [ ] Support generating and migrating tags based on ratings
 - [ ] Add indicator for current rating in context menu

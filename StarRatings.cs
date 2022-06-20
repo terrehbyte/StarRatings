@@ -4,7 +4,9 @@ using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
@@ -38,10 +40,7 @@ namespace StarRatings
 
         public override IEnumerable<GameMenuItem> GetGameMenuItems(GetGameMenuItemsArgs args)
         {
-            foreach (var item in ratingMenuItems)
-            {
-                yield return item;
-            }
+            return ratingMenuItems;
         }
 
         public override ISettings GetSettings(bool firstRunSettings)
@@ -57,10 +56,10 @@ namespace StarRatings
         public void InitializeRatings()
         {
             ratingMenuItems.Clear();
-
+            
             var curSettings = ((StarRatingsSettingsViewModel)GetSettings(false)).Settings;
             ratingStepSize = 100 / curSettings.RatingSteps;
-            
+
             // add all steps
             for (int i = curSettings.ShowZeroRating ? 0 : 1; i <= curSettings.RatingSteps; ++i)
             {
@@ -81,6 +80,27 @@ namespace StarRatings
                         PlayniteApi.Database.Games.Update(selectedGames.Games);
                     }
                 });
+
+                // add one for the half-star?
+                if (curSettings.EnableHalfStars && i < curSettings.RatingSteps)
+                {
+                    ratingMenuItems.Add(new GameMenuItem
+                    {
+                        MenuSection = "Set Rating",
+                        Description = $"{starLevel}.5 Stars",
+                        Action = (selectedGames) =>
+                        {
+                            // apply rating change
+                            foreach (var game in selectedGames.Games)
+                            {
+                                game.UserScore = ratingStepSize * starLevel + ratingStepSize/2;
+                            }
+
+                            // apply changes to db
+                            PlayniteApi.Database.Games.Update(selectedGames.Games);
+                        }   
+                    });
+                }
             }
             
             // add reset if enabled

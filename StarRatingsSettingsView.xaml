@@ -12,5 +12,7 @@
         <CheckBox IsChecked="{Binding Settings.ShowZeroRating}"/>
         <TextBlock Text="Show Option to Clear Rating"/>
         <CheckBox IsChecked="{Binding Settings.ShowReset}"/>
+        <TextBlock Text="Enable Half Star Ratings (e.g., 2.5 Stars)"/>
+        <CheckBox IsChecked="{Binding Settings.EnableHalfStars}"/>
     </StackPanel>
 </UserControl>
