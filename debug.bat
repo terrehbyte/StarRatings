@@ -4,7 +4,7 @@ call build.bat
 
 mkdir staging
 
-copy bin\Release\StarRatings.dll staging\StarRatings.dll
+copy bin\Debug\StarRatings.dll staging\StarRatings.dll
 copy extension.yaml staging\extension.yaml
 copy icon.png staging\icon.png
 copy check.png staging\check.png

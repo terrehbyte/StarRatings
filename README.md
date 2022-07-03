@@ -68,7 +68,7 @@ To change these settings, visit the "Add-ons" menu and check your "Extension set
 - [x] Add options for "half stars" like 2.5/5.0 (aka 50 points)
 - [ ] Support different rating item styles (e.g., "5*" vs. "5 Stars" vs. "⭐⭐⭐⭐⭐")
 - [ ] Support generating and migrating tags based on ratings
-- [ ] Add indicator for current rating in context menu
+- [x] Add indicator for current rating in context menu
 - [ ] Integrate localization
 - [ ] Create a custom user control to encourage custom theme adoption
 

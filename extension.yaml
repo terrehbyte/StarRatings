@@ -1,7 +1,18 @@
 ﻿Id: StarRatings
 Name: StarRatings
 Author: terrehbyte
-Version: 0.1.0
+# StarRatings Versioning Spec
+#
+# GENERATION.MAJOR.MINOR.PATCH
+#
+# generation should rarely increase - akin to Python 2 => Python 3
+# major should increase on major breakage
+# minor should increase w/ backwards compat additions
+# patch should increase w/ fixes and adjustments
+# 
+# https://www.reddit.com/r/programming/comments/v0trwu/major_version_numbers_are_not_sacred/iaj34fj/
+# 
+Version: 0.1.1.0
 Module: StarRatings.dll
 Type: GenericPlugin
 Icon: icon.png
