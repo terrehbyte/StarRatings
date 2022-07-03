@@ -180,12 +180,14 @@ namespace StarRatings
             return ratingStepSize * starLevel + (isHalfRating ? ratingStepSize/2 : 0);
         }
         
-        private static void ApplyUserScore(IEnumerable<Game> games, int? userScore)
+        private void ApplyUserScore(IEnumerable<Game> games, int? userScore)
         {
             foreach (Game game in games)
             {
                 game.UserScore = userScore;
             }
+            
+            PlayniteApi.Database.Games.Update(games);
         }
     }
 }
