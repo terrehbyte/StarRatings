@@ -5,23 +5,42 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              d:DesignHeight="400" d:DesignWidth="600">
-    <StackPanel>
+    <StackPanel Margin="4px, 2px">
+        <Label FontWeight="700" FontSize="20">StarRatings</Label>
+        <Separator></Separator>
         <Label FontWeight="600" FontSize="16">Ratings</Label>
-        <TextBlock Text="Number of Ratings Options"/>
-        <TextBox Text="{Binding Settings.RatingSteps}" PreviewTextInput="HandleTextInputPreview_RatingSteps"/>
+        <DockPanel Margin="4px, 2px" >
+            <TextBlock Text="Number of Ratings Options"/>
+            <TextBox Margin="4px, 2px" Text="{Binding Settings.RatingSteps}" PreviewTextInput="HandleTextInputPreview_RatingSteps"/>
+        </DockPanel>
+        
+        <DockPanel>
+        <CheckBox Margin="4px, 2px"  IsChecked="{Binding Settings.ShowZeroRating}"/>
         <TextBlock Text="Show Option for 0-Rating"/>
-        <CheckBox IsChecked="{Binding Settings.ShowZeroRating}"/>
+        </DockPanel>
+        
+        <DockPanel>
+        <CheckBox Margin="4px, 2px"  IsChecked="{Binding Settings.ShowReset}"/>
         <TextBlock Text="Show Option to Clear Rating"/>
-        <CheckBox IsChecked="{Binding Settings.ShowReset}"/>
+        </DockPanel>
+        
+        <DockPanel>
+        <CheckBox  Margin="4px, 2px" IsChecked="{Binding Settings.EnableHalfStars}"/>
         <TextBlock Text="Enable Half Star Ratings (e.g., 2.5 Stars)"/>
-        <CheckBox IsChecked="{Binding Settings.EnableHalfStars}"/>
+        </DockPanel>
+        
         <Separator></Separator>
         
         <Label FontWeight="600" FontSize="16">Tagging</Label>
-        <TextBlock Text="Should Apply Rating Tag"/>
-        <CheckBox IsChecked="{Binding Settings.ShouldApplyRatingTag}"/>
         
+        <DockPanel>
+        <CheckBox Margin="4px, 2px"  IsChecked="{Binding Settings.ShouldApplyRatingTag}"/>
+        <TextBlock Text="Should Apply Rating Tag"/>
+        </DockPanel>
+        
+        <DockPanel Margin="4px, 2px" >
         <TextBlock Text="Rating Tag Prefix"/>
-        <TextBox IsEnabled="{Binding Settings.ShouldApplyRatingTag}" Text="{Binding Settings.RatingTagPrefix}"></TextBox>
+        <TextBox Margin="4px, 2px" IsEnabled="{Binding Settings.ShouldApplyRatingTag}" Text="{Binding Settings.RatingTagPrefix}"></TextBox>
+        </DockPanel>
     </StackPanel>
 </UserControl>
