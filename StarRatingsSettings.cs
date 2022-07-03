@@ -15,10 +15,16 @@ namespace StarRatings
         private bool showReset = false;
         private bool enableHalfStars = false;
 
+        private bool shouldApplyRatingTag = false;
+        private string ratingTagPrefix = "Rating: ";
+
         public int RatingSteps { get => ratingSteps; set => SetValue(ref ratingSteps, value); }
         public bool ShowZeroRating { get => showZeroRating; set => SetValue(ref showZeroRating, value); }
         public bool ShowReset { get => showReset; set => SetValue(ref showReset, value); }
         public bool EnableHalfStars { get => enableHalfStars; set => SetValue(ref enableHalfStars, value); }
+        
+        public bool ShouldApplyRatingTag { get => shouldApplyRatingTag; set => SetValue(ref shouldApplyRatingTag, value); }
+        public string RatingTagPrefix { get => ratingTagPrefix; set => SetValue(ref ratingTagPrefix, value); }
         // Playnite serializes settings object to a JSON object and saves it as text file.
         // If you want to exclude some property from being saved then use `JsonDontSerialize` ignore attribute.
     }

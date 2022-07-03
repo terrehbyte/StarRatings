@@ -23,7 +23,7 @@ namespace StarRatings
 
         private readonly List<GameMenuItem> ratingMenuItems = new List<GameMenuItem>();
         private int lastIndexOfMenuItemWithCheck = -1;
-        private readonly Dictionary<int, int> scoreToRatingIndex = new Dictionary<int, int>();
+        private readonly Dictionary<int, RatingData> scoreToRatingData = new Dictionary<int, RatingData>();
 
         public override Guid Id { get; } = Guid.Parse("1d6c5e6a-2198-4b40-b3a1-28fe46f5704a");
 
@@ -36,11 +36,38 @@ namespace StarRatings
             };
         }
 
+        private class RatingData
+        {
+            public string ratingLabel { get; set; }
+            public int ratingIndex { get; set; }
+            public Guid ratingTagId { get; set; }
+        }
+
         public override void OnApplicationStarted(OnApplicationStartedEventArgs args)
         {
             InitializeRatings();
         }
 
+        public override IEnumerable<MainMenuItem> GetMainMenuItems(GetMainMenuItemsArgs args)
+        {
+            if (CurrentSettings.ShouldApplyRatingTag)
+            {
+                yield return new MainMenuItem
+                {
+                    MenuSection = "StarRatings",
+                    Description = "Rebuild Rating Tags",
+                    Action = (menuArgs) => ApplyRatingTags(PlayniteApi.Database.Games.ToList()),
+                };
+                
+                yield return new MainMenuItem
+                {
+                    MenuSection = "StarRatings",
+                    Description = "Clear All Rating Tags",
+                    Action = (menuArgs) => ClearRatingTags(PlayniteApi.Database.Games.ToList()),
+                };
+            }
+        }
+        
         public override IEnumerable<GameMenuItem> GetGameMenuItems(GetGameMenuItemsArgs args)
         {
             // clear old check if previously applied
@@ -107,7 +134,7 @@ namespace StarRatings
         public void InitializeRatings()
         {
             ratingMenuItems.Clear();
-            scoreToRatingIndex.Clear();
+            scoreToRatingData.Clear();
             
             // reload settings
             var curSettings = ((StarRatingsSettingsViewModel)GetSettings(false)).Settings;
@@ -124,7 +151,7 @@ namespace StarRatings
                     Description = $"{starLevel} Stars",
                     Action = (selectedGames) => ApplyUserScore(selectedGames.Games, actualScore)
                 });
-                scoreToRatingIndex[actualScore] = ratingIndex++; 
+                scoreToRatingData[actualScore] =  new RatingData() { ratingIndex =  ratingIndex++, ratingLabel = $"{CurrentSettings.RatingTagPrefix}{starLevel} Stars" };
 
                 // add one for the half-star?
                 if (curSettings.EnableHalfStars && i < curSettings.RatingSteps)
@@ -136,7 +163,7 @@ namespace StarRatings
                         Description = $"{starLevel}.5 Stars",
                         Action = (selectedGames) => ApplyUserScore(selectedGames.Games, actualHalfScore)
                     });
-                    scoreToRatingIndex[actualHalfScore] = ratingIndex++;
+                    scoreToRatingData[actualHalfScore] =  new RatingData() { ratingIndex =  ratingIndex++, ratingLabel = $"{CurrentSettings.RatingTagPrefix}{starLevel}.5 Stars" };
                 }
             }
             
@@ -161,13 +188,32 @@ namespace StarRatings
             }
 
             lastIndexOfMenuItemWithCheck = -1;
+            
+            // make tags available if enabled
+            if (curSettings.ShouldApplyRatingTag)
+            {
+                foreach (var ratingPair in scoreToRatingData)
+                {
+                    var rating = ratingPair.Value;
+
+                    var ratingTag = PlayniteApi.Database.Tags.SingleOrDefault(x => x.Name == rating.ratingLabel);
+                    if (ratingTag == null)
+                    {
+                        rating.ratingTagId = PlayniteApi.Database.Tags.Add(rating.ratingLabel).Id;
+                    }
+                    else
+                    {
+                        rating.ratingTagId = ratingTag.Id;
+                    }
+                }
+            }
         }
 
         public int GetRatingIndexFromUserScore(int ratingSteps, int userScore, bool allowHalfRatings, bool allowZeroRating)
         {
-            if (scoreToRatingIndex.ContainsKey(userScore))
+            if (scoreToRatingData.ContainsKey(userScore))
             {
-                return scoreToRatingIndex[userScore];
+                return scoreToRatingData[userScore].ratingIndex;
             }
 
             // doesn't map
@@ -185,6 +231,58 @@ namespace StarRatings
             foreach (Game game in games)
             {
                 game.UserScore = userScore;
+
+                if (CurrentSettings.ShouldApplyRatingTag && userScore.HasValue)
+                {
+                    game.TagIds.Add(scoreToRatingData[userScore.Value].ratingTagId);
+                }
+            }
+            
+            PlayniteApi.Database.Games.Update(games);
+        }
+
+        private void ApplyRatingTags(IEnumerable<Game> games)
+        {
+            foreach (var game in games)
+            {
+                // skip if no score
+                if(!game.UserScore.HasValue) { continue; }
+
+                int userScore = game.UserScore.Value;
+                
+                // skip if score does not correspond to anything
+                // TODO: consider rounding down to next applicable score
+                if (!scoreToRatingData.ContainsKey(userScore)) { continue; }
+
+                // create TagIds for game if none exists
+                if (game.TagIds == null)
+                {
+                    game.TagIds = new List<Guid>();
+                }
+                
+                // retrieve and stage tag
+                game.TagIds.Add(scoreToRatingData[userScore].ratingTagId);
+            }
+            
+            PlayniteApi.Database.Games.Update(games);
+        }
+        
+        private void ClearRatingTags(IEnumerable<Game> games)
+        {
+            // cache list of tags to remove
+            List<Guid> tagsToRemove = new List<Guid>();
+            foreach (var rating in scoreToRatingData)
+            {
+                tagsToRemove.Add(rating.Value.ratingTagId);
+            }
+            
+            foreach (var game in games)
+            {
+                // skip if it doesn't have any tags
+                if (game.TagIds == null) { continue; }
+                
+                // remove all known rating tags
+                game.TagIds.RemoveAll(x => tagsToRemove.Contains(x));
             }
             
             PlayniteApi.Database.Games.Update(games);
