@@ -234,6 +234,8 @@ namespace StarRatings
 
                 if (CurrentSettings.ShouldApplyRatingTag && userScore.HasValue)
                 {
+                    // create tags if game has none
+                    if (game.TagIds == null) { game.TagIds = new List<Guid>(1); }
                     game.TagIds.Add(scoreToRatingData[userScore.Value].ratingTagId);
                 }
             }
