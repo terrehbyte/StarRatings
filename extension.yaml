@@ -12,7 +12,7 @@ Author: terrehbyte
 # 
 # https://www.reddit.com/r/programming/comments/v0trwu/major_version_numbers_are_not_sacred/iaj34fj/
 # 
-Version: 0.1.2.0
+Version: 0.1.4.0
 Module: StarRatings.dll
 Type: GenericPlugin
 Icon: icon.png
