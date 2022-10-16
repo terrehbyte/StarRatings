@@ -116,6 +116,10 @@ To change these settings, visit the "Add-ons" menu and check your "Extension set
 - [ ] Integrate localization
 - [ ] Create a custom user control to encourage custom theme adoption
 
+## Known Issues
+
+- Rating tags are not visible on a game until the next time the game is viewed
+
 ## License
 
 MIT License (c) Terry Nguyen 2022
