@@ -1,11 +1,11 @@
 # Star Ratings
 
 Quickly set a **User Score** for your games in Playnite by **right-clicking and
-picking a score** from 1-5* (or whatever range you want).
+picking a score** from 1-5* (or whatever rating system you want).
 
 ![A context menu containing ratings options for a game, starting with "1 Star".](.github/gameMenuItems.png)
 
-This plugin is built and tested with **Playnite 9**.
+This plugin is built and tested with **Playnite 9/10**.
 
 ## Features
 
@@ -60,18 +60,13 @@ Once enabled, a tag will be applied to a game upon rating:
 If you want to apply tags to games that you've already rated or remove all
 tags altogether, check out the Main Menu items.
 
-> **WARNING - Clear Tags Before Changing Your Rating Scheme**  
-> Tags are not currently cleared out when you change your tagging system
-> preferences. **To avoid duplicate tags**, clear your tags before you change
-> your rating scale or adjust the prefix used for your rating tags.
-
 Under _StarRatings_ are two options:
 
 - **Rebuild Rating Tags**
   - All rated games will be given a tag that corresponds to their rating level.
 - **Clear All Rating Tags**
   - Removes all tags used by the current rating system.
-  - Warning: As stated above, this is based off of the _current_ rating system.
+  - Note: This is limited to tags used by the current rating scheme.
 
 ![Utilities labelled "Rebuild Rating Tags" and "Clear All Rating Tags" are available in the Main Menu under "StarRatings"](.github/mainMenuItems.png)
 
@@ -88,7 +83,7 @@ You can configure the number of stars available and add a few utility options:
 - **Show Option to Clear Rating**
   - If checked, adds an option to reset the score.
   - Default: No
-- **Enable Star Ratings**
+- **Enable Half Star Ratings**
   - If checked, allows you to award half a star at each star level. (e.g. 4.5 out of 5 stars)
   - Default: No
 
