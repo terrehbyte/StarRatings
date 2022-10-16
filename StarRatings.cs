@@ -56,14 +56,18 @@ namespace StarRatings
                 {
                     MenuSection = "StarRatings",
                     Description = "Rebuild Rating Tags",
-                    Action = (menuArgs) => ApplyRatingTags(PlayniteApi.Database.Games.ToList()),
+                    Action = (menuArgs) =>
+                    {
+                        ClearRatingTags(PlayniteApi.Database.Games);
+                        ReapplyRatingTags(PlayniteApi.Database.Games);
+                    },
                 };
                 
                 yield return new MainMenuItem
                 {
                     MenuSection = "StarRatings",
                     Description = "Clear All Rating Tags",
-                    Action = (menuArgs) => ClearRatingTags(PlayniteApi.Database.Games.ToList()),
+                    Action = (menuArgs) => ClearRatingTags(PlayniteApi.Database.Games),
                 };
             }
         }
@@ -230,8 +234,25 @@ namespace StarRatings
         {
             foreach (Game game in games)
             {
+                // remove existing tag if needed
+                if (CurrentSettings.ShouldApplyRatingTag && game.UserScore.HasValue && game.TagIds != null)
+                {
+                    int originalScore = game.UserScore.Value;
+                    
+                    // round down to previous level
+                    if (!scoreToRatingData.ContainsKey(originalScore))
+                    {
+                        int stepSize = 100 / CurrentSettings.RatingSteps;
+                        originalScore = (originalScore / stepSize) * stepSize;
+                    }
+
+                    game.TagIds.Remove(scoreToRatingData[originalScore].ratingTagId);
+                }
+                
+                // set new score
                 game.UserScore = userScore;
 
+                // update tag if needed
                 if (CurrentSettings.ShouldApplyRatingTag && userScore.HasValue)
                 {
                     // create tags if game has none
@@ -243,7 +264,7 @@ namespace StarRatings
             PlayniteApi.Database.Games.Update(games);
         }
 
-        private void ApplyRatingTags(IEnumerable<Game> games)
+        public void ReapplyRatingTags(IEnumerable<Game> games)
         {
             foreach (var game in games)
             {
@@ -251,17 +272,14 @@ namespace StarRatings
                 if(!game.UserScore.HasValue) { continue; }
 
                 int userScore = game.UserScore.Value;
-                
-                // skip if score does not correspond to anything
-                // TODO: consider rounding down to next applicable score
-                if (!scoreToRatingData.ContainsKey(userScore)) { continue; }
 
-                // create TagIds for game if none exists
-                if (game.TagIds == null)
+                // round down to previous level
+                if (!scoreToRatingData.ContainsKey(userScore))
                 {
-                    game.TagIds = new List<Guid>();
+                    int stepSize = 100 / CurrentSettings.RatingSteps;
+                    userScore = (userScore / stepSize) * stepSize;
                 }
-                
+
                 // retrieve and stage tag
                 game.TagIds.Add(scoreToRatingData[userScore].ratingTagId);
             }
@@ -269,7 +287,7 @@ namespace StarRatings
             PlayniteApi.Database.Games.Update(games);
         }
         
-        private void ClearRatingTags(IEnumerable<Game> games)
+        public void ClearRatingTags(IEnumerable<Game> games)
         {
             // cache list of tags to remove
             List<Guid> tagsToRemove = new List<Guid>();

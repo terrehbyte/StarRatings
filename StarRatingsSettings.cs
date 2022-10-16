@@ -32,7 +32,7 @@ namespace StarRatings
     public class StarRatingsSettingsViewModel : ObservableObject, ISettings
     {
         private readonly StarRatings plugin;
-        private StarRatingsSettings editingClone { get; set; }
+        private StarRatingsSettings prevSavedSettings { get; set; }
 
         private StarRatingsSettings settings;
         public StarRatingsSettings Settings
@@ -54,27 +54,20 @@ namespace StarRatings
             var savedSettings = plugin.LoadPluginSettings<StarRatingsSettings>();
 
             // LoadPluginSettings returns null if not saved data is available.
-            if (savedSettings != null)
-            {
-                Settings = savedSettings;
-            }
-            else
-            {
-                Settings = new StarRatingsSettings();
-            }
+            Settings = savedSettings ?? new StarRatingsSettings();
         }
 
         public void BeginEdit()
         {
             // Code executed when settings view is opened and user starts editing values.
-            editingClone = Serialization.GetClone(Settings);
+            prevSavedSettings = Serialization.GetClone(Settings);
         }
 
         public void CancelEdit()
         {
             // Code executed when user decides to cancel any changes made since BeginEdit was called.
             // This method should revert any changes made to Option1 and Option2.
-            Settings = editingClone;
+            Settings = prevSavedSettings;
         }
 
         public void EndEdit()
@@ -82,10 +75,29 @@ namespace StarRatings
             // Code executed when user decides to confirm changes made since BeginEdit was called.
             // This method should save settings made to Option1 and Option2.
             plugin.SavePluginSettings(Settings);
+
+            bool hasChangedRatingScheme = prevSavedSettings.EnableHalfStars != Settings.EnableHalfStars ||
+                                          prevSavedSettings.RatingSteps != Settings.RatingSteps ||
+                                          prevSavedSettings.ShowZeroRating != Settings.ShowZeroRating ||
+                                          prevSavedSettings.ShouldApplyRatingTag != Settings.ShouldApplyRatingTag ||
+                                          prevSavedSettings.RatingTagPrefix != Settings.RatingTagPrefix;
+
+            // did we have tags enabled before?
+            if (hasChangedRatingScheme && prevSavedSettings.ShouldApplyRatingTag)
+            {
+                plugin.ClearRatingTags(plugin.PlayniteApi.Database.Games);
+            }
             
             // Reinitialize ratings on edit
             // TODO - We could listen for actual changes but this should be fairly cheap
+            //        and uncomplicated to maintain until we need more complexity
             plugin.InitializeRatings();
+            
+            // do we need to apply tags again?
+            if (hasChangedRatingScheme && Settings.ShouldApplyRatingTag)
+            {
+                plugin.ReapplyRatingTags(plugin.PlayniteApi.Database.Games);
+            }
         }
 
         public bool VerifySettings(out List<string> errors)
